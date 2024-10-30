@@ -1,10 +1,18 @@
 from flask_sqlalchemy import SQLAlchemy
-from uuid import uuid
+from datetime import datetime
 
 db = SQLAlchemy()
 
+
 class User(db.Model):
-  __tablename__ = "users" #for table name
-  id = db.Column( db.Integer, primary_key=True ) #assigns an id as a primary Key
-  email = db.Column( db.String, unique = True ) #each email given has to be unique
-  password = db.Column(db.String(30)) #limit bycrypt password hash 30
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        }

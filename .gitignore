@@ -1,1 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Environment variables file
 .env
+
+# Flask instance folder
+instance/
+
+# SQLite database
+*.db
+
+# Pytest cache
+.pytest_cache/
+
+# IDE / editor settings
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Virtual environments
+env/
+venv/
+ENV/
+
+# JWT tokens and session files
+*.jwt
+
+# OS generated files
+.DS_Store
+Thumbs.db
