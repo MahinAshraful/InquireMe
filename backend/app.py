@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -26,14 +25,10 @@ def create_app():
     except OSError:
         pass
 
-    # Remove this line since we don't need the sentence directory
-    # os.makedirs("sentence", exist_ok=True)
-
     # Configure CORS
     CORS(app)
 
     # Database Configuration
-    # Use absolute path for SQLite database
     db_path = os.path.join(app.instance_path, "database.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
