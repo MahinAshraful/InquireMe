@@ -1,11 +1,96 @@
-import './App.css'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import Login from './components/Login'
+import Register from './components/Register'
+import Dashboard from './components/Dashboard'
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      fetch('http://localhost:5000/api/protected', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          setIsAuthenticated(true)
+        } else {
+          localStorage.removeItem('token')
+          setIsAuthenticated(false)
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem('token')
+        setIsAuthenticated(false)
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+    } else {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const setAuth = (token: any) => {
+    if (token) {
+      localStorage.setItem('token', token)
+      setIsAuthenticated(true)
+    } else {
+      localStorage.removeItem('token')
+      setIsAuthenticated(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
 
   return (
-    <>
-      <p className='bg-black'>test</p>
-    </>
+    <div className="min-h-screen bg-gray-50">
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            !isAuthenticated ? (
+              <Login setAuth={setAuth} />
+            ) : (
+              <Navigate to="/dashboard" />
+            )
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            !isAuthenticated ? (
+              <Register setAuth={setAuth} />
+            ) : (
+              <Navigate to="/dashboard" />
+            )
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            isAuthenticated ? (
+              <Dashboard setAuth={setAuth} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    </div>
   )
 }
 
