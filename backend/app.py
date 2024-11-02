@@ -12,36 +12,29 @@ from models import db, User
 from dotenv import load_dotenv
 import os
 
-# Load environment variables
 load_dotenv()
 
 
 def create_app():
     app = Flask(__name__)
 
-    # Ensure instance folder exists
     try:
         os.makedirs(app.instance_path, exist_ok=True)
     except OSError:
         pass
 
-    # Configure CORS
     CORS(app)
 
-    # Database Configuration
     db_path = os.path.join(app.instance_path, "database.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # JWT Configuration
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "default-secret-key")
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
-    # Initialize extensions
     jwt = JWTManager(app)
     db.init_app(app)
 
-    # Create tables
     with app.app_context():
         db.create_all()
 
