@@ -48,7 +48,7 @@ function Dashboard({ setAuth }: DashboardProps) {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-[#93ad9c]">
       <Sidebar
         collapsed={sidebarCollapsed}
         toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
