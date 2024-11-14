@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Sidebar from './subcomponents/Sidebar';
 
 interface DashboardProps {
   setAuth: (auth: any | null) => void;
@@ -12,9 +13,10 @@ interface UserInfo {
 }
 
 function Dashboard({ setAuth }: DashboardProps) {
-  const [message, setMessage] = useState<string>('')
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
-  const navigate = useNavigate()
+  const [message, setMessage] = useState<string>('');
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProtectedData = async () => {
@@ -23,49 +25,49 @@ function Dashboard({ setAuth }: DashboardProps) {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
-        })
-        const data: UserInfo = await response.json()
+        });
+        const data: UserInfo = await response.json();
         if (response.ok) {
-          setMessage(data.message || '')
-          setUserInfo(data)
+          setMessage(data.message || '');
+          setUserInfo(data);
         } else {
-          setAuth(null)
-          navigate('/login')
+          setAuth(null);
+          navigate('/login');
         }
       } catch (err) {
-        console.error('Error fetching protected data:', err)
+        console.error('Error fetching protected data:', err);
       }
-    }
+    };
 
-    fetchProtectedData()
-  }, [])
+    fetchProtectedData();
+  }, []);
 
   const handleLogout = () => {
-    setAuth(null)
-    navigate('/login')
-  }
+    setAuth(null);
+    navigate('/login');
+  };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-gray-900">Dashboard</h2>
-        <div className="space-y-4">
-          <p className="text-center text-gray-700">{message}</p>
-          {userInfo && (
-            <p className="text-center text-gray-600">
-              Member since: {userInfo.user_since}
-            </p>
-          )}
-          <button
-            onClick={handleLogout}
-            className="w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            Logout
-          </button>
+    <div className="flex min-h-screen bg-white">
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onLogout={handleLogout}
+      />
+      
+      <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+        <div className="p-8">
+          <h1 className="mb-4 text-3xl font-bold text-gray-900">Dashboard</h1>
+          <div className="text-gray-600">
+            <p className="mb-2">{message}</p>
+            {userInfo && (
+              <p>Member since: {userInfo.user_since}</p>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
     </div>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
